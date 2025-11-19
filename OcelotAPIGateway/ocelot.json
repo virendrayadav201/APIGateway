@@ -1,0 +1,119 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7081",
+    "RequestIdKey": "RequestId",
+    "RateLimitOptions": {
+      "ClientIdHeader": "ClientId",
+      "EnableRateLimiting": true,
+      "HttpStatusCode": 429,
+      "QuotaExceededMessage": "Rate limit exceeded",
+      "RateLimitCounterPrefix": "ocelot"
+    }
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7174
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "UpstreamPathTemplate": "/test/ratelimit",
+      "DownstreamPathTemplate": "/api/test/ratelimit",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7278
+        }
+      ],
+      "UpstreamHttpMethod": [ "GET" ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 2
+      }
+    },
+    {
+      //this is for getting notification by id only without authentication
+      "DownstreamPathTemplate": "/api/NotificationService/getnotification/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7278
+        }
+      ],
+      "UpstreamPathTemplate": "/notification/getnotification/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 2
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/NotificationService/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7278
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "eShopFlixEndPointKey@12345678"
+      },
+      "RouteClaimsRequirement": {
+        "Roles": [ "Admin,User" ]
+      },
+      "UpstreamPathTemplate": "/notification/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      //this is for getting task by id only without authentication
+      "DownstreamPathTemplate": "/api/tasks/GetTaskByTaskId/{taskId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7134
+        }
+      ],
+      "UpstreamPathTemplate": "/task/gettaskbytaskid/{taskId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 2
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7134
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "eShopFlixEndPointKey@12345678"
+      },
+      "RouteClaimsRequirement": {
+        "Roles": [ "Admin,User" ]
+      },
+      "UpstreamPathTemplate": "/task/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    }
+  ]
+}
